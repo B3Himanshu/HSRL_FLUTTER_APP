@@ -1,14 +1,23 @@
 workflows:
-  ios-debug-workflow:
-    name: iOS Debug Build
+  ios-build-workflow:
+    name: iOS Build
     max_build_duration: 60
     environment:
       flutter: stable
     scripts:
-      - name: Get Flutter packages
+      - name: Get packages
         script: flutter pub get
-      - name: Build iOS (no code signing)
+      - name: Build iOS
         script: |
-          flutter build ios --debug --no-codesign
+          flutter build ios --release --no-codesign
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CONFIGURATION_BUILD_DIR=$CM_BUILD_DIR/output
     artifacts:
-      - build/ios/iphoneos/Runner.app
+      - $CM_BUILD_DIR/output/Runner.app
