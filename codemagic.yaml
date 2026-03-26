@@ -1,0 +1,19 @@
+workflows:
+  ios-workflow:
+    name: HSRL iOS Build
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      vars:
+        BASE_URL: $BASE_URL
+        APP_NAME: $APP_NAME
+    scripts:
+      - name: Get packages
+        script: flutter pub get
+      - name: Build iOS
+        script: |
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/iphoneos/Runner.app
