@@ -1,0 +1,43 @@
+name: iOS IPA Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  ios-build:
+    name: iOS Build
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: stable
+
+      - name: Run flutter pub get
+        run: flutter pub get
+
+      - name: Run pod repo update
+        run: cd ios && pod repo update
+
+      - name: Run flutter build ios --release --no-codesign
+        run: flutter build ios --release --no-codesign
+
+      - name: Run mkdir Payload
+        run: mkdir -p Payload
+
+      - name: Run mv Runner.app/ Payload
+        run: mv build/ios/iphoneos/Runner.app Payload/
+
+      - name: Zip output
+        run: zip -r app-release.ipa Payload
+
+      - name: Upload binaries to release
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.ipa
+          path: app-release.ipa
