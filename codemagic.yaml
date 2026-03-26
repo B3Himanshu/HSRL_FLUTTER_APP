@@ -1,18 +1,13 @@
 workflows:
-  ios-workflow:
-    name: HSRL iOS Build
-    instance_type: mac_mini_m1
+  ios-debug-workflow:
+    name: iOS Debug Build
+    max_build_duration: 60
     environment:
       flutter: stable
-      xcode: latest
-      cocoapods: default
-      vars:
-        BASE_URL: $BASE_URL
-        APP_NAME: $APP_NAME
     scripts:
-      - name: Get packages
+      - name: Get Flutter packages
         script: flutter pub get
-      - name: Build iOS
+      - name: Build iOS (no code signing)
         script: |
           flutter build ios --debug --no-codesign
     artifacts:
